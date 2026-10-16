@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101827" />
+  <title>Binary Relations Lab</title>
+  <style>
+    :root {
+      --bg: #0b1120;
+      --panel: #121c2e;
+      --panel2: #17243a;
+      --line: #2b3a53;
+      --text: #eef4ff;
+      --muted: #a6b4ca;
+      --accent: #7cbbff;
+      --accent2: #b7f0d0;
+      --danger: #ffb3b3;
+      --shadow: 0 18px 55px rgba(0,0,0,.22);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(66,130,220,.17), transparent 32rem),
+        radial-gradient(circle at 100% 10%, rgba(73,198,155,.10), transparent 26rem),
+        var(--bg);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+    .shell { width: min(1100px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 56px; }
+    header { display: flex; justify-content: space-between; gap: 20px; align-items: center; margin-bottom: 28px; }
+    .eyebrow { color: var(--accent); text-transform: uppercase; letter-spacing: .16em; font-size: .74rem; font-weight: 800; }
+    h1 { margin: 5px 0 7px; font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.08; letter-spacing: -.045em; }
+    .subtitle { margin: 0; max-width: 680px; color: var(--muted); }
+    .pill { border: 1px solid var(--line); color: var(--accent2); background: rgba(183,240,208,.06); padding: 8px 12px; border-radius: 999px; font-size: .82rem; white-space: nowrap; }
+    .layout { display: grid; grid-template-columns: 270px minmax(0,1fr); gap: 20px; align-items: start; }
+    .panel { background: rgba(18,28,46,.91); border: 1px solid var(--line); border-radius: 20px; padding: 20px; box-shadow: var(--shadow); }
+    .panel h2 { margin: 0 0 5px; font-size: 1.04rem; }
+    .hint { color: var(--muted); font-size: .88rem; margin: 0 0 16px; }
+    .menu { display: grid; gap: 8px; }
+    button, select, input, textarea { font: inherit; }
+    button { cursor: pointer; border: 1px solid var(--line); background: var(--panel2); color: var(--text); padding: 11px 13px; border-radius: 11px; text-align: left; transition: border-color .15s, transform .15s, background .15s; }
+    button:hover { border-color: var(--accent); transform: translateY(-1px); }
+    button.active { background: rgba(124,187,255,.13); border-color: var(--accent); }
+    button.primary { background: var(--accent); color: #081321; border-color: var(--accent); font-weight: 800; text-align: center; }
+    button.primary:hover { background: #a1d0ff; }
+    button.secondary { text-align: center; }
+    .menu-num { color: var(--accent); font-weight: 800; margin-right: 8px; }
+    .main { display: grid; gap: 18px; min-width: 0; }
+    .topline { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .topline h2 { font-size: 1.35rem; margin: 0 0 4px; }
+    .tag { color: var(--muted); font-size: .78rem; border: 1px solid var(--line); border-radius: 999px; padding: 5px 9px; white-space: nowrap; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+    .actions button { flex: 1; text-align: center; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: block; color: var(--muted); font-size: .82rem; font-weight: 650; margin-bottom: 6px; }
+    input, textarea, select { width: 100%; background: #0d1626; color: var(--text); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; outline: none; }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
+    .student-row { display: grid; grid-template-columns: minmax(90px,.7fr) minmax(0,1.3fr) auto; gap: 9px; align-items: end; margin-bottom: 10px; }
+    .student-row .remove { color: var(--danger); padding: 10px 12px; }
+    .data-list { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 10px; margin-top: 15px; }
+    .student-card { background: #0d1626; border: 1px solid var(--line); border-radius: 12px; padding: 12px; overflow-wrap: anywhere; }
+    .student-card strong { display: block; font-size: 1rem; margin-bottom: 4px; }
+    .student-card span { color: var(--muted); font-size: .84rem; }
+    .stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+    .stat { background: #0d1626; border: 1px solid var(--line); border-radius: 13px; padding: 13px; }
+    .stat .label { color: var(--muted); font-size: .8rem; }
+    .stat .value { font-size: 1.25rem; font-weight: 800; margin-top: 4px; }
+    .yes { color: var(--accent2); } .no { color: var(--danger); }
+    .result-box { background: #0d1626; border: 1px solid var(--line); border-radius: 13px; padding: 14px; }
+    .result-box h3 { margin: 0 0 8px; font-size: .98rem; }
+    .pairs { display: flex; flex-wrap: wrap; gap: 7px; }
+    .pair { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 5px 8px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .84rem; }
+    .empty { color: var(--muted); font-size: .9rem; }
+    .note { color: var(--muted); font-size: .82rem; margin: 13px 0 0; }
+    .notice { border-left: 3px solid var(--accent); padding: 9px 12px; background: rgba(124,187,255,.07); border-radius: 0 8px 8px 0; color: var(--muted); font-size: .88rem; }
+    footer { color: #71829d; font-size: .8rem; text-align: center; padding-top: 24px; }
+    [hidden] { display: none !important; }
+    @media (max-width: 760px) {
+      .layout { grid-template-columns: 1fr; }
+      header { align-items: flex-start; flex-direction: column; }
+      .menu { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .menu button { font-size: .84rem; }
+    }
+    @media (max-width: 480px) {
+      .shell { width: min(100% - 20px, 1100px); padding-top: 22px; }
+      .panel { padding: 15px; border-radius: 15px; }
+      .form-grid, .stats { grid-template-columns: 1fr; }
+      .student-row { grid-template-columns: 1fr; background: #0d1626; padding: 10px; border-radius: 12px; }
+      .student-row .remove { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div>
+        <div class="eyebrow">Discrete Mathematics Project</div>
+        <h1>Binary Relations Lab</h1>
+        <p class="subtitle">Build a relation from shared courses, inspect ordered pairs, and test reflexivity, symmetry, transitivity, and equivalence classes.</p>
+      </div>
+      <div class="pill">● Interactive · No backend required</div>
+    </header>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>Program menu</h2>
+        <p class="hint">Choose an operation, just like the Python menu.</p>
+        <div class="menu" id="menu">
+          <button class="active" data-action="custom"><span class="menu-num">1.</span>Custom data</button>
+          <button data-action="case1"><span class="menu-num">2.</span>Load Case 1</button>
+          <button data-action="case2"><span class="menu-num">3.</span>Load Case 2</button>
+          <button data-action="students"><span class="menu-num">4.</span>View students</button>
+          <button data-action="pairs"><span class="menu-num">5.</span>View relation pairs</button>
+          <button data-action="properties"><span class="menu-num">6.</span>Check properties</button>
+          <button data-action="all"><span class="menu-num">7.</span>Show all results</button>
+          <button data-action="exit"><span class="menu-num">8.</span>Reset / exit view</button>
+        </div>
+        <p class="note">The relation contains (A, B) when A and B share at least one course.</p>
+      </aside>
+
+      <main class="main">
+        <section class="panel" id="customPanel">
+          <div class="topline">
+            <div>
+              <h2>Enter custom students and courses</h2>
+              <p class="hint">Use unique student IDs. Separate multiple courses with commas.</p>
+            </div>
+            <span class="tag">Option 1</span>
+          </div>
+          <div id="studentRows"></div>
+          <div class="actions">
+            <button class="secondary" id="addStudent">＋ Add student</button>
+            <button class="primary" id="applyCustom">Build relation</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="topline">
+            <div>
+              <h2 id="currentTitle">Report Case 1</h2>
+              <p class="hint" id="currentDesc">Three students share C1; student D takes C2.</p>
+            </div>
+            <span class="tag" id="studentCount">4 students</span>
+          </div>
+          <div id="studentView" class="data-list"></div>
+          <div class="actions">
+            <button class="secondary" id="showStudents">View students</button>
+            <button class="secondary" id="showPairs">View ordered pairs</button>
+            <button class="primary" id="showProperties">Check properties</button>
+          </div>
+        </section>
+
+        <section class="panel" id="resultsPanel">
+          <div class="topline">
+            <div>
+              <h2>Analysis results</h2>
+              <p class="hint">Select “Show all results” or an individual menu operation.</p>
+            </div>
+            <span class="tag" id="resultMode">Ready</span>
+          </div>
+          <div id="results" class="notice">Your relation analysis will appear here.</div>
+        </section>
+      </main>
+    </div>
+    <footer>Binary Relations Lab · HTML, CSS and JavaScript · Deployable as a static Vercel site</footer>
+  </div>
+
+<script>
+  const caseOne = {
+    title: "Report Case 1",
+    description: "A, B, and C share course C1; D takes C2.",
+    students: ["A", "B", "C", "D"],
+    courses: { A: ["C1"], B: ["C1"], C: ["C1"], D: ["C2"] }
+  };
+  const caseTwo = {
+    title: "Report Case 2",
+    description: "A takes C1; B takes C1 and C2; C takes C2; D takes C3.",
+    students: ["A", "B", "C", "D"],
+    courses: { A: ["C1"], B: ["C1", "C2"], C: ["C2"], D: ["C3"] }
+  };
+
+  let data = structuredClone(caseOne);
+  let relation = buildRelation(data.students, data.courses);
+  const $ = (id) => document.getElementById(id);
+
+  function buildRelation(students, courses) {
+    const pairs = [];
+    for (const a of students) {
+      for (const b of students) {
+        const aCourses = new Set(courses[a] || []);
+        if ((courses[b] || []).some(course => aCourses.has(course))) pairs.push([a, b]);
+      }
+    }
+    return pairs;
+  }
+
+  function isReflexive(students, pairs) {
+    return students.every(a => pairs.some(([x, y]) => x === a && y === a));
+  }
+  function isSymmetric(pairs) {
+    return pairs.every(([a, b]) => pairs.some(([x, y]) => x === b && y === a));
+  }
+  function isTransitive(pairs) {
+    for (const [a, b] of pairs) {
+      for (const [c, d] of pairs) {
+        if (b === c && !pairs.some(([x, y]) => x === a && y === d)) return false;
+      }
+    }
+    return true;
+  }
+  function getProperties() {
+    const reflexive = isReflexive(data.students, relation);
+    const symmetric = isSymmetric(relation);
+    const transitive = isTransitive(relation);
+    return { reflexive, symmetric, transitive, equivalence: reflexive && symmetric && transitive };
+  }
+  function equivalenceClasses() {
+    const remaining = new Set(data.students);
+    const classes = [];
+    while (remaining.size) {
+      const student = remaining.values().next().value;
+      const group = data.students.filter(other =>
+        relation.some(([a,b]) => a === student && b === other) &&
+        relation.some(([a,b]) => a === other && b === student)
+      );
+      classes.push(group);
+      group.forEach(name => remaining.delete(name));
+    }
+    return classes;
+  }
+  function escapeHtml(value) {
+    return String(value).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[ch]);
+  }
+  function renderStudents() {
+    $("currentTitle").textContent = data.title;
+    $("currentDesc").textContent = data.description;
+    $("studentCount").textContent = `${data.students.length} student${data.students.length === 1 ? "" : "s"}`;
+    $("studentView").innerHTML = data.students.map(name => {
+      const courses = data.courses[name] || [];
+      return `<div class="student-card"><strong>${escapeHtml(name)}</strong><span>${courses.length ? courses.map(escapeHtml).join(", ") : "No courses entered"}</span></div>`;
+    }).join("");
+  }
+  function showPairs() {
+    $("resultMode").textContent = "Ordered pairs";
+    $("results").className = "result-box";
+    $("results").innerHTML = `<h3>Relation R · ${relation.length} ordered pair${relation.length === 1 ? "" : "s"}</h3>` +
+      (relation.length
+        ? `<div class="pairs">${relation.map(([a,b]) => `<span class="pair">(${escapeHtml(a)}, ${escapeHtml(b)})</span>`).join("")}</div>`
+        : `<p class="empty">The relation is empty.</p>`);
+  }
+  function showProperties() {
+    const p = getProperties();
+    $("resultMode").textContent = "Property check";
+    $("results").className = "result-box";
+    const item = (label, value) => `<div class="stat"><div class="label">${label}</div><div class="value ${value ? "yes" : "no"}">${value ? "Yes" : "No"}</div></div>`;
+    let html = `<h3>Properties of relation R</h3><div class="stats">${item("Reflexive",p.reflexive)}${item("Symmetric",p.symmetric)}${item("Transitive",p.transitive)}</div>`;
+    html += `<div style="margin-top:14px" class="notice">${p.equivalence ? "R is an EQUIVALENCE RELATION." : "R is NOT an equivalence relation."}</div>`;
+    if (p.equivalence) {
+      html += `<h3 style="margin-top:16px">Equivalence classes</h3><div class="pairs">${equivalenceClasses().map(group => `<span class="pair">{${group.map(escapeHtml).join(", ")}}</span>`).join("")}</div>`;
+    }
+    $("results").innerHTML = html;
+  }
+  function showAll() {
+    $("resultMode").textContent = "Full report";
+    $("results").className = "result-box";
+    const p = getProperties();
+    const prop = (label, value) => `<span class="pair">${label}: <b class="${value ? "yes" : "no"}">${value ? "Yes" : "No"}</b></span>`;
+    let html = `<h3>Students and courses</h3><div class="pairs">${data.students.map(s => `<span class="pair">${escapeHtml(s)} → ${(data.courses[s] || []).map(escapeHtml).join(", ") || "No courses"}</span>`).join("")}</div>`;
+    html += `<h3 style="margin-top:18px">Relation R · ${relation.length} ordered pairs</h3><div class="pairs">${relation.map(([a,b]) => `<span class="pair">(${escapeHtml(a)}, ${escapeHtml(b)})</span>`).join("") || '<span class="empty">Empty relation</span>'}</div>`;
+    html += `<h3 style="margin-top:18px">Properties</h3><div class="pairs">${prop("Reflexive",p.reflexive)}${prop("Symmetric",p.symmetric)}${prop("Transitive",p.transitive)}</div>`;
+    html += `<div class="notice" style="margin-top:14px">${p.equivalence ? "R is an EQUIVALENCE RELATION." : "R is NOT an equivalence relation."}</div>`;
+    if (p.equivalence) html += `<h3 style="margin-top:16px">Equivalence classes</h3><div class="pairs">${equivalenceClasses().map(group => `<span class="pair">{${group.map(escapeHtml).join(", ")}}</span>`).join("")}</div>`;
+    $("results").innerHTML = html;
+  }
+  function addRow(name = "", courses = "") {
+    const row = document.createElement("div");
+    row.className = "student-row";
+    row.innerHTML = `<div><label>Student name / ID</label><input class="student-name" placeholder="e.g. A" value="${escapeHtml(name)}"></div>
+      <div><label>Courses (comma-separated)</label><input class="student-courses" placeholder="e.g. C1, C2" value="${escapeHtml(courses)}"></div>
+      <button class="remove" type="button" aria-label="Remove student">Remove</button>`;
+    row.querySelector(".remove").addEventListener("click", () => {
+      if ($("studentRows").children.length > 1) row.remove();
+      else alert("Keep at least one student row.");
+    });
+    $("studentRows").appendChild(row);
+  }
+  function loadCase(which) {
+    data = structuredClone(which === 1 ? caseOne : caseTwo);
+    relation = buildRelation(data.students, data.courses);
+    renderStudents();
+    showAll();
+  }
+  function loadCustomIntoForm() {
+    $("studentRows").innerHTML = "";
+    data.students.forEach(name => addRow(name, (data.courses[name] || []).join(", ")));
+  }
+  function applyCustom() {
+    const rows = [...$("studentRows").querySelectorAll(".student-row")];
+    const students = [];
+    const courses = {};
+    for (const row of rows) {
+      const name = row.querySelector(".student-name").value.trim();
+      const courseText = row.querySelector(".student-courses").value.trim();
+      if (!name) { alert("Every student must have a name or ID."); return; }
+      if (students.includes(name)) { alert(`Duplicate student ID: ${name}. Please use unique IDs.`); return; }
+      students.push(name);
+      courses[name] = courseText ? [...new Set(courseText.split(",").map(x => x.trim()).filter(Boolean))] : [];
+    }
+    if (!students.length) { alert("Enter at least one student."); return; }
+    data = { title: "Custom relation", description: "Relation built from your custom student/course data.", students, courses };
+    relation = buildRelation(students, courses);
+    renderStudents();
+    showAll();
+  }
+
+  document.querySelectorAll("#menu button").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("#menu button").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+      switch (button.dataset.action) {
+        case "custom":
+          $("customPanel").hidden = false;
+          loadCustomIntoForm();
+          $("resultMode").textContent = "Custom data";
+          $("results").className = "notice";
+          $("results").textContent = "Edit the student/course rows, then select Build relation.";
+          break;
+        case "case1": loadCase(1); break;
+        case "case2": loadCase(2); break;
+        case "students":
+          $("resultMode").textContent = "Students";
+          $("results").className = "result-box";
+          $("results").innerHTML = `<h3>Students and their courses</h3><div class="pairs">${data.students.map(s => `<span class="pair">${escapeHtml(s)}: ${(data.courses[s] || []).map(escapeHtml).join(", ") || "No courses"}</span>`).join("")}</div>`;
+          break;
+        case "pairs": showPairs(); break;
+        case "properties": showProperties(); break;
+        case "all": showAll(); break;
+        case "exit":
+          $("resultMode").textContent = "Reset";
+          $("results").className = "notice";
+          $("results").textContent = "View reset. Choose a case or enter custom data to continue.";
+          break;
+      }
+    });
+  });
+  $("addStudent").addEventListener("click", () => addRow());
+  $("applyCustom").addEventListener("click", applyCustom);
+  $("showStudents").addEventListener("click", () => {
+    $("resultMode").textContent = "Students";
+    $("results").className = "result-box";
+    $("results").innerHTML = `<h3>Students and their courses</h3><div class="pairs">${data.students.map(s => `<span class="pair">${escapeHtml(s)}: ${(data.courses[s] || []).map(escapeHtml).join(", ") || "No courses"}</span>`).join("")}</div>`;
+  });
+  $("showPairs").addEventListener("click", showPairs);
+  $("showProperties").addEventListener("click", showProperties);
+
+  loadCustomIntoForm();
+  renderStudents();
+  showAll();
+</script>
+</body>
+</html>
